@@ -3,6 +3,7 @@ package ru.practicum.item;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+import ru.practicum.item.dto.AddItemRequest;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -26,10 +27,16 @@ public class ItemController {
         return itemService.getItemsWithUrlState(userId);
     }
 
+    @GetMapping("/count")
+    public List<ItemCountByUser> getItemsCountForUserByUrl(@RequestHeader("X-Later-User-Id") Long userId,
+                                                           @RequestParam(required = false) String url) {
+        return itemService.getItemsCountForUserByUrl(userId, url);
+    }
+
     @PostMapping
     public ItemDto add(@RequestHeader("X-Later-User-Id") Long userId,
-                    @RequestBody CreateItemDto itemDto) {
-        return ItemMapper.makeItemDto(itemService.addNewItem(userId, ItemMapper.makeItem(itemDto)));
+                    @RequestBody AddItemRequest itemRequest) {
+        return itemService.addNewItem(userId, itemRequest);
     }
 
     @DeleteMapping("/{itemId}")

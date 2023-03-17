@@ -1,17 +1,23 @@
 package ru.practicum.item;
 
+import com.querydsl.core.types.dsl.BooleanExpression;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.practicum.item.dto.AddItemRequest;
 import ru.practicum.tag.TagRepository;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class ItemServiceImpl implements ItemService {
     private final ItemRepository repository;
+
+    private final UrlMetaDataRetriever urlMetaDataRetriever;
     private final ItemUrlStatusProvider itemUrlStatusProvider;
     private final TagRepository tagRepository;
 
@@ -23,11 +29,20 @@ public class ItemServiceImpl implements ItemService {
 
     @Transactional
     @Override
-    public Item addNewItem(Long userId, Item item) {
-        item.setUserId(userId);
-        Item savedItem = repository.save(item);
-        itemUrlStatusProvider.checkupForNewItem(savedItem);
-        return savedItem;
+    public ItemDto addNewItem(Long userId, AddItemRequest request) {
+        UrlMetaDataRetriever.UrlMetaData result = urlMetaDataRetriever.retrieve(request.getUrl());
+        Optional<Item> maybeExistingItem = repository.findByUserIdAndResolvedUrl(userId, result.getResolvedUrl());
+        Item item;
+        if(maybeExistingItem.isEmpty()) {
+            item = repository.save(ItemMapper.makeItem(result, userId, request.getTags()));
+        } else {
+            item = maybeExistingItem.get();
+            if (request.getTags() != null && !request.getTags().isEmpty()) {
+                item.getTags().addAll(request.getTags());
+                repository.save(item);
+            }
+        }
+        return ItemMapper.makeItemDto(item);
     }
 
     @Transactional
@@ -47,5 +62,11 @@ public class ItemServiceImpl implements ItemService {
         item.setTags(tagRepository.findAllByItemId(itemId).stream()
                 .map(t -> t.getName()).collect(Collectors.toSet()));
         return item;
+    }
+
+    @Override
+    public List<ItemCountByUser> getItemsCountForUserByUrl(Long userId, String urlPart) {
+        urlPart = Optional.ofNullable(urlPart).orElse("");
+        return repository.countItemsByUser(urlPart);
     }
 }

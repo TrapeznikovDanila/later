@@ -1,17 +1,24 @@
 package ru.practicum.item;
 
 import lombok.*;
+import ru.practicum.tag.Tag;
 
 import java.util.Set;
 
-@Builder
+@Builder(toBuilder = true)
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
 public class ItemDto {
     private Long id;
-    private Long userId;
-    private String url;
+    private String normalUrl;
+    private String resolvedUrl;
+    private String mimeType;
+    private String title;
+    private boolean hasImage;
+    private boolean hasVideo;
+    private boolean unread;
+    private String dateResolved;
     private Set<String> tags;
 }
