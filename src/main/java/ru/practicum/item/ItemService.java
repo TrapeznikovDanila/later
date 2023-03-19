@@ -1,11 +1,11 @@
 package ru.practicum.item;
 
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestParam;
 import ru.practicum.item.dto.AddItemRequest;
+import ru.practicum.item.dto.GetItemRequest;
+import ru.practicum.item.dto.ItemDto;
+import ru.practicum.item.dto.ModifyItemRequest;
 
 import java.util.List;
-import java.util.Set;
 
 public interface ItemService {
     List<Item> getItems(long userId);
@@ -14,4 +14,6 @@ public interface ItemService {
     List<ItemInfoWithUrlState> getItemsWithUrlState(long userId);
     Item getItemById(long userId, long itemId);
     List<ItemCountByUser> getItemsCountForUserByUrl(Long userId, String urlPart);
+    List<ItemDto> getItems(GetItemRequest req);
+    ItemDto patchItem(ModifyItemRequest request);
 }

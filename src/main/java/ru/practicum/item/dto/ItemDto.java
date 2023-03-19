@@ -1,4 +1,4 @@
-package ru.practicum.item;
+package ru.practicum.item.dto;
 
 import lombok.*;
 import ru.practicum.tag.Tag;

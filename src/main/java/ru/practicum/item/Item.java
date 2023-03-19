@@ -7,6 +7,7 @@ import javax.persistence.*;
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 @Entity
@@ -16,6 +17,7 @@ import java.util.Set;
 @NoArgsConstructor
 @Getter
 @Setter
+@ToString
 public class Item {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -45,12 +47,13 @@ public class Item {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof Item)) return false;
-        return id != null && id.equals(((Item) o).getId());
+        if (o == null || getClass() != o.getClass()) return false;
+        Item item = (Item) o;
+        return hasImage == item.hasImage && hasVideo == item.hasVideo && unread == item.unread && Objects.equals(id, item.id) && Objects.equals(userId, item.userId) && Objects.equals(url, item.url) && Objects.equals(tags, item.tags) && Objects.equals(resolvedUrl, item.resolvedUrl) && Objects.equals(mimeType, item.mimeType) && Objects.equals(title, item.title) && Objects.equals(dateResolved, item.dateResolved);
     }
 
     @Override
     public int hashCode() {
-        return getClass().hashCode();
+        return Objects.hash(id, userId, url, tags, resolvedUrl, mimeType, title, hasImage, hasVideo, dateResolved, unread);
     }
 }

@@ -1,11 +1,13 @@
 package ru.practicum.item;
 
-import ru.practicum.tag.Tag;
+import ru.practicum.item.dto.ItemDto;
 
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public class ItemMapper {
 
@@ -41,5 +43,10 @@ public class ItemMapper {
                 .dateResolved(dtFormatter.format(item.getDateResolved()))
                 .tags(new HashSet<>(item.getTags()))
                 .build();
+    }
+
+    public static List<ItemDto> makeItemDtos(Iterable<Item> items) {
+        return ((List<Item>) items).stream().map(i -> makeItemDto(i))
+                .collect(Collectors.toList());
     }
 }

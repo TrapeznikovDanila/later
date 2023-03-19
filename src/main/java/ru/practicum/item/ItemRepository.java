@@ -9,7 +9,8 @@ import java.util.List;
 import java.util.Optional;
 
 @RepositoryRestResource
-public interface ItemRepository extends JpaRepository<Item, Long>, ItemRepositoryCustom {
+public interface ItemRepository extends JpaRepository<Item, Long>, QuerydslPredicateExecutor<Item>,
+        ItemRepositoryCustom {
     List<Item> findByUserId(long userId);
 
     List<ItemInfo> findAllByUserId(Long userId);
